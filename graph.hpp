@@ -4,6 +4,7 @@
 #include <vector>
 #include <set>
 #include <iostream>
+#include <cmath>
 using namespace std;
 
 class Node {
@@ -26,27 +27,51 @@ public:
 		cout << "\n";
 		return;
 	}
-	static Node* alloc_node(int x, int y) {
-		Node* new_node = (Node*)malloc(sizeof(Node));
-		*new_node = Node(x, y);
-		return new_node;
-	}
+	/*	static Node* alloc_node(int x, int y) {
+			Node* new_node = (Node*)malloc(sizeof(Node));
+			*new_node = Node(x, y);
+			return new_node;
+		}*/
 };
 class Graph {
 public:
 	int side_length;
 	vector<vector<Node*>> matrix;
+	~Graph() {
+		for (int i = 0; i < side_length; i++) {
+			for (int j = 0; j < side_length; j++) {
+				if (matrix[i][j]) {
+					delete(matrix[i][j]);
+				}
+			}
+		}
+	}
 	Graph(int side_length): side_length(side_length) {
 		matrix.resize(side_length, vector<Node*>(side_length, nullptr ));
 		for (int i = 0; i < side_length; i++) {
 			for (int j = 0; j < side_length; j++) {
 				//cout << "x: "<< i << ", y: "<< j << '\n';
-				matrix[i][j] = Node::alloc_node(i, j);
+				//matrix[i][j] = Node::alloc_node(i, j);
+				matrix[i][j] = new Node(i, j);
 
 				cout << "x: " << matrix[i][j]->coors.first << ", y: " << matrix[i][j]->coors.second << '\n';
 			}
 		}
 	}
+	void set_p(int p) {
+		for (int i = 0; i < side_length; i++) {
+			for (int j = 0; j < side_length; j++) {
+				for (int k = -p; k <= p; k++) {
+					for (int l = -p; l <= p; l++) {
+						if (abs(k) + abs(l) <= p && i + k >= 0 && i + k < side_length && j + l >= 0 && j + l < side_length && (k != 0 || l != 0)) {
+							add_edge(make_pair(make_pair(i, j), make_pair(i + k, j + l)));
+						}
+					}
+				}
+			}
+		}
+	}
+
 	Node* find_node(int i, int j) {
 		return matrix[i][j];
 	}
