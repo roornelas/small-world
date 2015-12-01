@@ -5,6 +5,8 @@
 #include <set>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
+
 using namespace std;
 
 class Node {
@@ -36,6 +38,7 @@ public:
 class Graph {
 public:
 	int side_length;
+	int r;
 	vector<vector<Node*>> matrix;
 	~Graph() {
 		for (int i = 0; i < side_length; i++) {
@@ -68,6 +71,61 @@ public:
 						}
 					}
 				}
+			}
+		}
+	}
+	int static lattice_distance(pair<int, int> u, pair<int, int> v) {
+		return abs(v.first - u.first) + abs (v.second - u.second);
+	}
+
+	double add_long_edges(pair<int,int> vertex, int q, int r){
+
+		cout << "Adding long edges of " << "(" << vertex.first << ", " << vertex.second << ") \n ";
+		double norm_const = 0;
+		int vertex_index = vertex.first * side_length + vertex.second;
+		vector<double> cdf;
+
+		cdf.resize(side_length*side_length);
+
+		for (int i = 0; i < side_length; i++) {
+			for (int j = 0; j < side_length; j++) {
+				if(!(vertex.first == i && vertex.second == j)){
+					norm_const+=  pow(lattice_distance(vertex, make_pair(i,j)), -r);
+				}
+			}
+		}
+
+		double total = 0;
+		
+
+		for (int i = 0; i < side_length*side_length; i++) {
+			double diff = (i == vertex_index) ? 0: pow(lattice_distance(vertex, make_pair(i / side_length, i % side_length)), -r)/norm_const;				
+			total+= diff;
+			cdf[i] = total;		
+			
+			cout << "Total " << i / side_length << ", " << i%side_length<< " : " << total << ", diff: "<< diff<< ", norm_const = "<<norm_const<< ", cdf: "<< cdf[i]<<'\n';
+		}
+
+		for (int i = 0; i < q; i++){
+			double random = ((double) rand() / (RAND_MAX));
+			vector<double>::iterator low =std::upper_bound(cdf.begin(), cdf.end(), random);
+			int cdf_index = distance(cdf.begin(), low);
+			cout << "Random " << random << ", cdf_index: "<< cdf_index <<", max distance: " << distance(cdf.begin(), cdf.end()) <<'\n';
+			if(cdf_index == vertex_index){
+				cout<< "This will never happen";
+				exit(1);
+			}
+			pair<int,int> neighbor = make_pair(cdf_index / side_length, cdf_index % side_length);
+			
+			add_edge(make_pair(vertex, neighbor));
+		}
+	}
+
+	void set_q_r(int q, int r) {
+		srand(time(NULL));
+		for (int i = 0; i < side_length; i++) {
+			for (int j = 0; j < side_length; j++) {
+				add_long_edges(make_pair(i,j), q, r);				
 			}
 		}
 	}
