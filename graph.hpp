@@ -1,3 +1,12 @@
+/** This is the initial code we have written to analyze the algorithms and model presented in the research
+ * paper: The Small-World Phenomenon: An Algorithmic Perspective by Jon Kleinberg.
+ * We made some design decisions about our graph to model acquaintances between people, including funtional
+ * randomization to model long-range friendships. We ran a couple of tests and verified that our graph is
+ * behaving as expected for different parameters p,q, and r.
+ * (Code is still messy and uncommented, will clean it soon :)
+ */
+
+
 #pragma once
 
 #include <utility>
@@ -78,45 +87,45 @@ public:
 		return abs(v.first - u.first) + abs (v.second - u.second);
 	}
 
-	double add_long_edges(pair<int,int> vertex, int q, int r){
+	double add_long_edges(pair<int, int> vertex, int q, int r) {
 
 		cout << "Adding long edges of " << "(" << vertex.first << ", " << vertex.second << ") \n ";
 		double norm_const = 0;
 		int vertex_index = vertex.first * side_length + vertex.second;
 		vector<double> cdf;
 
-		cdf.resize(side_length*side_length);
+		cdf.resize(side_length * side_length);
 
 		for (int i = 0; i < side_length; i++) {
 			for (int j = 0; j < side_length; j++) {
-				if(!(vertex.first == i && vertex.second == j)){
-					norm_const+=  pow(lattice_distance(vertex, make_pair(i,j)), -r);
+				if (!(vertex.first == i && vertex.second == j)) {
+					norm_const +=  pow(lattice_distance(vertex, make_pair(i, j)), -r);
 				}
 			}
 		}
 
 		double total = 0;
-		
 
-		for (int i = 0; i < side_length*side_length; i++) {
-			double diff = (i == vertex_index) ? 0: pow(lattice_distance(vertex, make_pair(i / side_length, i % side_length)), -r)/norm_const;				
-			total+= diff;
-			cdf[i] = total;		
-			
-			cout << "Total " << i / side_length << ", " << i%side_length<< " : " << total << ", diff: "<< diff<< ", norm_const = "<<norm_const<< ", cdf: "<< cdf[i]<<'\n';
+
+		for (int i = 0; i < side_length * side_length; i++) {
+			double diff = (i == vertex_index) ? 0 : pow(lattice_distance(vertex, make_pair(i / side_length, i % side_length)), -r) / norm_const;
+			total += diff;
+			cdf[i] = total;
+
+			cout << "Total " << i / side_length << ", " << i % side_length << " : " << total << ", diff: " << diff << ", norm_const = " << norm_const << ", cdf: " << cdf[i] << '\n';
 		}
 
-		for (int i = 0; i < q; i++){
+		for (int i = 0; i < q; i++) {
 			double random = ((double) rand() / (RAND_MAX));
-			vector<double>::iterator low =std::upper_bound(cdf.begin(), cdf.end(), random);
+			vector<double>::iterator low = std::upper_bound(cdf.begin(), cdf.end(), random);
 			int cdf_index = distance(cdf.begin(), low);
-			cout << "Random " << random << ", cdf_index: "<< cdf_index <<", max distance: " << distance(cdf.begin(), cdf.end()) <<'\n';
-			if(cdf_index == vertex_index){
-				cout<< "This will never happen";
+			cout << "Random " << random << ", cdf_index: " << cdf_index << ", max distance: " << distance(cdf.begin(), cdf.end()) << '\n';
+			if (cdf_index == vertex_index) {
+				cout << "This will never happen";
 				exit(1);
 			}
-			pair<int,int> neighbor = make_pair(cdf_index / side_length, cdf_index % side_length);
-			
+			pair<int, int> neighbor = make_pair(cdf_index / side_length, cdf_index % side_length);
+
 			add_edge(make_pair(vertex, neighbor));
 		}
 	}
@@ -125,7 +134,7 @@ public:
 		srand(time(NULL));
 		for (int i = 0; i < side_length; i++) {
 			for (int j = 0; j < side_length; j++) {
-				add_long_edges(make_pair(i,j), q, r);				
+				add_long_edges(make_pair(i, j), q, r);
 			}
 		}
 	}
