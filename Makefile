@@ -8,7 +8,7 @@ all: $(TARGETS)
 test_graph: test_graph.o
 	g++ -o test_graph test_graph.o $(CXXFLAGS)
 
-%.o: %.cpp graph.hpp
+%.o: %.cpp %.hpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS)
 
 clean:
