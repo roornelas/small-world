@@ -66,7 +66,7 @@ public:
 				//matrix[i][j] = Node::alloc_node(i, j);
 				matrix[i][j] = new Node(i, j);
 
-				cout << "x: " << matrix[i][j]->coors.first << ", y: " << matrix[i][j]->coors.second << '\n';
+				//cout << "x: " << matrix[i][j]->coors.first << ", y: " << matrix[i][j]->coors.second << '\n';
 			}
 		}
 	}
@@ -89,7 +89,7 @@ public:
 
 	double add_long_edges(pair<int, int> vertex, int q, int r) {
 
-		cout << "Adding long edges of " << "(" << vertex.first << ", " << vertex.second << ") \n ";
+		//cout << "Adding long edges of " << "(" << vertex.first << ", " << vertex.second << ") \n ";
 		double norm_const = 0;
 		int vertex_index = vertex.first * side_length + vertex.second;
 		vector<double> cdf;
@@ -112,14 +112,14 @@ public:
 			total += diff;
 			cdf[i] = total;
 
-			cout << "Total " << i / side_length << ", " << i % side_length << " : " << total << ", diff: " << diff << ", norm_const = " << norm_const << ", cdf: " << cdf[i] << '\n';
+			//cout << "Total " << i / side_length << ", " << i % side_length << " : " << total << ", diff: " << diff << ", norm_const = " << norm_const << ", cdf: " << cdf[i] << '\n';
 		}
 
 		for (int i = 0; i < q; i++) {
 			double random = ((double) rand() / (RAND_MAX));
 			vector<double>::iterator low = std::upper_bound(cdf.begin(), cdf.end(), random);
 			int cdf_index = distance(cdf.begin(), low);
-			cout << "Random " << random << ", cdf_index: " << cdf_index << ", max distance: " << distance(cdf.begin(), cdf.end()) << '\n';
+			//cout << "Random " << random << ", cdf_index: " << cdf_index << ", max distance: " << distance(cdf.begin(), cdf.end()) << '\n';
 			if (cdf_index == vertex_index) {
 				cout << "This will never happen";
 				exit(1);
