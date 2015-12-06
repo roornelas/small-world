@@ -52,12 +52,12 @@ int searchBFS (Graph* g, pair<int, int> start, pair<int, int> end) {
       }
     }
   }
-  
+
   int dist = 0;
   curr = target;
   while (curr != begin) {
-  	dist++;
-  	curr = parents.at(curr);
+    dist++;
+    curr = parents.at(curr);
   }
   return dist;
 };
@@ -103,8 +103,8 @@ int searchGreedy (Graph* g, pair<int, int> start, pair<int, int> end) {
     for (pair<int, int> f : curr->friends) {
       int tempdist = Graph::lattice_distance(f, end);
       if (tempdist < mindist) {
-      	mindist = tempdist;
-      	temp = g->find_node(f.first, f.second);
+        mindist = tempdist;
+        temp = g->find_node(f.first, f.second);
       }
     }
     curr = temp;
