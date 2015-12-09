@@ -1,9 +1,10 @@
-/** This is the initial code we have written to analyze the algorithms and model presented in the research
+/** This code analyzes the algorithms and model presented in the research
  * paper: The Small-World Phenomenon: An Algorithmic Perspective by Jon Kleinberg.
+ * https://www.cs.cornell.edu/home/kleinber/swn.pdf
+ * Please see section called "the Model" to see how we are building our randomized graph
+ *
  * We made some design decisions about our graph to model acquaintances between people, including funtional
- * randomization to model long-range friendships. We ran a couple of tests and verified that our graph is
- * behaving as expected for different parameters p,q, and r.
- * (Code is still messy and uncommented, will clean it soon :)
+ * randomization to model long-range friendships.
  */
 
 
@@ -55,11 +56,7 @@ public:
 		matrix.resize(side_length, vector<Node*>(side_length, nullptr ));
 		for (int i = 0; i < side_length; i++) {
 			for (int j = 0; j < side_length; j++) {
-				//cout << "x: "<< i << ", y: "<< j << '\n';
-				//matrix[i][j] = Node::alloc_node(i, j);
 				matrix[i][j] = new Node(i, j);
-
-				//cout << "x: " << matrix[i][j]->coors.first << ", y: " << matrix[i][j]->coors.second << '\n';
 			}
 		}
 	}
@@ -116,15 +113,12 @@ public:
 			double diff = (i == vertex_index) ? 0 : pow(lattice_distance(vertex, make_pair(i / side_length, i % side_length)), -r) / norm_const;
 			total += diff;
 			cdf[i] = total;
-
-			//cout << "Total " << i / side_length << ", " << i % side_length << " : " << total << ", diff: " << diff << ", norm_const = " << norm_const << ", cdf: " << cdf[i] << '\n';
 		}
 
 		for (int i = 0; i < q; i++) {
 			double random = ((double) rand() / (RAND_MAX));
 			vector<double>::iterator low = std::upper_bound(cdf.begin(), cdf.end(), random);
 			int cdf_index = distance(cdf.begin(), low);
-			//cout << "Random " << random << ", cdf_index: " << cdf_index << ", max distance: " << distance(cdf.begin(), cdf.end()) << '\n';
 
 			pair<int, int> neighbor = make_pair(cdf_index / side_length, cdf_index % side_length);
 
